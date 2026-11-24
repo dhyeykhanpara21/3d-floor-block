@@ -3,7 +3,8 @@ import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import { GTAOPass } from 'three/examples/jsm/postprocessing/GTAOPass.js';
 import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
-import { FXAAPass } from 'three/examples/jsm/postprocessing/FXAAPass.js';
+import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
+import { FXAAShader } from 'three/examples/jsm/shaders/FXAAShader.js';
 
 // Physical Sky & Ground HDR Environment Generator
 export function setupEnvironment(renderer, scene) {
@@ -65,13 +66,19 @@ export function createPostProcessing(renderer, scene, camera) {
   const outputPass = new OutputPass();
   composer.addPass(outputPass);
 
-  // 4. Anti-Aliasing (FXAA)
-  const fxaaPass = new FXAAPass();
+  // 4. Anti-Aliasing (FXAA using standard Three.js ShaderPass & FXAAShader)
+  const fxaaPass = new ShaderPass(FXAAShader);
+  const pixelRatio = renderer.getPixelRatio();
+  fxaaPass.material.uniforms['resolution'].value.x = 1 / (width * pixelRatio);
+  fxaaPass.material.uniforms['resolution'].value.y = 1 / (height * pixelRatio);
   composer.addPass(fxaaPass);
 
   function resize(w, h) {
     composer.setSize(w, h);
     if (gtaoPass) gtaoPass.setSize(w, h);
+    const pr = renderer.getPixelRatio();
+    fxaaPass.material.uniforms['resolution'].value.x = 1 / (w * pr);
+    fxaaPass.material.uniforms['resolution'].value.y = 1 / (h * pr);
   }
 
   return { composer, resize };
