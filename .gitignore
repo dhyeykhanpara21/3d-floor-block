@@ -1,1 +1,25 @@
-/node_modules
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Temporary screenshots & testing dumps in root (docs/ images remain tracked)
+preview*.png
+test*.png
+
+# Environment & Local Configurations
+.env
+.env.local
+.env.*.local
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.log
+
+# Editor & System Files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
